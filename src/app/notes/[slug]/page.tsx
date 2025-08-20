@@ -14,11 +14,9 @@ type Note = {
 
 // **CHANGE 1: Define the Props type explicitly**
 type Props = {
-  params: {
-    slug: string;
-  };
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
-
 // This function tells Next.js which pages to pre-build
 export async function generateStaticParams() {
   const { data: notes } = await supabase.from('notes').select('slug');
