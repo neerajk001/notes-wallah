@@ -1,5 +1,5 @@
 // src/app/notes/[slug]/page.tsx
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/app/lib/supabaseClient';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 
