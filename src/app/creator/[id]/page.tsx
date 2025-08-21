@@ -35,9 +35,10 @@ async function getPublicUrl(path: string) {
 export default async function CreatorNotesPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params; // creator slug
+  // Await the params Promise in Next.js 15
+  const { id } = await params;
 
   if (!id) {
     return (
