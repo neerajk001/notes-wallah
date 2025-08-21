@@ -57,7 +57,7 @@ export default function HomePage() {
         </div>
         <div className="hidden sm:flex items-center gap-3">
           <Link
-            href="/note"
+            href="/creator"
             className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/90 backdrop-blur-md transition hover:bg-white/10"
           >
             Browse Notes
@@ -87,7 +87,7 @@ export default function HomePage() {
           {/* CTA */}
           <div className="mt-8 flex justify-center">
             <Link
-              href="/note"
+              href="/creator"
               className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 via-sky-400 to-emerald-400 px-6 py-3 font-semibold text-black shadow-lg transition hover:shadow-[0_10px_40px_-10px_rgba(34,211,238,0.7)]"
             >
               Get All Notes
