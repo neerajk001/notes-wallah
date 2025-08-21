@@ -12,11 +12,12 @@ type Note = {
   reference_url: string;
 };
 
-// **CHANGE 1: Define the Props type explicitly**
+// **FIX: Change params to Promise<{ slug: string }>**
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>; // Changed from { slug: string }
   searchParams?: { [key: string]: string | string[] | undefined };
 };
+
 // This function tells Next.js which pages to pre-build
 export async function generateStaticParams() {
   const { data: notes } = await supabase.from('notes').select('slug');
@@ -36,13 +37,14 @@ async function getNote(slug: string) {
 // Helper to convert YouTube URL to an embeddable URL
 const getYoutubeEmbedUrl = (url: string) => {
   if (!url) return '';
-  const videoIdMatch = url.match(/(?:watch\?v=|\/embed\/|\/)([\w-]{11})(?:\S+)?$/);
+  const videoIdMatch = url.match(/(?:watch\?v=|\/embed\/|\/)([\\w-]{11})(?:\\S+)?$/);
   return videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : '';
 };
 
-// **CHANGE 2: Use the new Props type here**
+// **FIX: Await params before using it**
 export default async function NotePage({ params }: Props) {
-  const note: Note | null = await getNote(params.slug);
+  const { slug } = await params; // **Added await here**
+  const note: Note | null = await getNote(slug); // Now using slug from awaited params
 
   if (!note) {
     return (
@@ -57,8 +59,8 @@ export default async function NotePage({ params }: Props) {
 
   const embedUrl = getYoutubeEmbedUrl(note.youtube_url);
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const pdfUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${params.slug}.pdf`;
-  const markdownUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${params.slug}.md`;
+  const pdfUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${slug}.pdf`; // Using slug variable
+  const markdownUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${slug}.md`; // Using slug variable
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8">
