@@ -12,10 +12,10 @@ type Note = {
   reference_url: string;
 };
 
-// **FIX: Change params to Promise<{ slug: string }>**
+// **FIX: Both params AND searchParams must be Promises in Next.js 15**
 type Props = {
-  params: Promise<{ slug: string }>; // Changed from { slug: string }
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>; // Changed to Promise
 };
 
 // This function tells Next.js which pages to pre-build
@@ -41,10 +41,13 @@ const getYoutubeEmbedUrl = (url: string) => {
   return videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : '';
 };
 
-// **FIX: Await params before using it**
-export default async function NotePage({ params }: Props) {
-  const { slug } = await params; // **Added await here**
-  const note: Note | null = await getNote(slug); // Now using slug from awaited params
+// **FIX: Await both params and searchParams**
+export default async function NotePage({ params, searchParams }: Props) {
+  const { slug } = await params;
+  // If you need searchParams, await it too:
+  // const searchParamsData = await searchParams;
+  
+  const note: Note | null = await getNote(slug);
 
   if (!note) {
     return (
@@ -59,8 +62,8 @@ export default async function NotePage({ params }: Props) {
 
   const embedUrl = getYoutubeEmbedUrl(note.youtube_url);
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const pdfUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${slug}.pdf`; // Using slug variable
-  const markdownUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${slug}.md`; // Using slug variable
+  const pdfUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${slug}.pdf`;
+  const markdownUrl = `${supabaseUrl}/storage/v1/object/public/downloads/${slug}.md`;
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8">
