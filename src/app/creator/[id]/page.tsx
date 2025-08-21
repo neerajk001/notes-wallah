@@ -4,7 +4,6 @@ import { supabase } from "@/app/lib/supabaseClient";
 
 export const revalidate = 30;
 
-type Creator = { name: string; slug: string };
 type Note = {
   title: string;
   slug: string;
@@ -24,9 +23,11 @@ async function getNotesByCreatorSlug(creatorSlug: string) {
     .order("title");
 }
 
-// Helper: hardcode bucket name as "download" and use entire path as object path
+// Helper: hardcode bucket name as "download" and trim whitespace from path
 async function getPublicUrl(path: string) {
-  const { data, error } = supabase.storage.from("download").getPublicUrl(path);
+  // Trim any whitespace characters including \r\n
+  const cleanPath = path.trim();
+  const { data, error } = supabase.storage.from("download").getPublicUrl(cleanPath);
   if (error) throw error;
   return data.publicUrl;
 }
@@ -68,7 +69,9 @@ export default async function CreatorNotesPage({
         <Link href="/creator" className="text-white/80 hover:text-white">← All Creators</Link>
         <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.06] p-6">
           <h2 className="text-xl font-semibold">Creator not found</h2>
-          <p className="mt-2 text-white/70">No creator exists with slug "{id}". Check creators.slug values.</p>
+          <p className="mt-2 text-white/70">
+            No creator exists with slug &ldquo;{id}&rdquo;. Check creators.slug values.
+          </p>
         </div>
       </main>
     );
