@@ -27,8 +27,7 @@ async function getNotesByCreatorSlug(creatorSlug: string) {
 async function getPublicUrl(path: string) {
   // Trim any whitespace characters including \r\n
   const cleanPath = path.trim();
-  const { data, error } = supabase.storage.from("download").getPublicUrl(cleanPath);
-  if (error) throw error;
+  const { data } = supabase.storage.from("download").getPublicUrl(cleanPath);
   return data.publicUrl;
 }
 
